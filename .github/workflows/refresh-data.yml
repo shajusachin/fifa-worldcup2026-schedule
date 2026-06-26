@@ -1,0 +1,46 @@
+name: Refresh World Cup data
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # every 10 minutes
+  workflow_dispatch:          # manual "Run workflow" button
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/refresh.mjs'
+      - '.github/workflows/refresh-data.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Refresh data
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+        run: node scripts/refresh.mjs
+
+      - name: Commit changes
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json scorers.json match-details.json \
+                  fixtures-embed.js scorers-embed.js details-embed.js data-compact.json
+          if git diff --quiet --cached; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: refresh World Cup data [skip ci]"
+            git push
+          fi

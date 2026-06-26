@@ -1,0 +1,11 @@
+# Internal version snapshots (local restore points, not for the public repo)
+versions/
+
+# Editor / OS cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Temp syntax-check artifacts
+._chk*.js
+node_modules/
