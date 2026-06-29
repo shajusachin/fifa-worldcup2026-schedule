@@ -68,6 +68,14 @@
   .ctrl-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;
     letter-spacing:1px;text-transform:uppercase;color:var(--text-sub);white-space:nowrap;}
   body.print-mode .header-right{display:none;}
+  /* Floating exit-print button — the only visible control once the bar is hidden;
+     itself hidden on real paper. */
+  #exit-print{display:none;position:fixed;top:14px;right:14px;z-index:300;
+    background:#111;color:#fff;border:1px solid #111;border-radius:6px;
+    padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+    font-size:14px;letter-spacing:.5px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  body.print-mode #exit-print{display:block;}
+  @media print{ #exit-print{display:none!important;} }
 
   select,.btn,.nav-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;
     letter-spacing:.5px;border:1.5px solid var(--ctrl-border);border-radius:4px;padding:6px 12px;
@@ -340,6 +348,7 @@
 </style>
 </head>
 <body>
+<button id="exit-print">✕ Exit Print Mode</button>
 <div class="page">
 
   <div class="header">
@@ -719,6 +728,7 @@ function initControls(){
   $('team-filter').onchange = e=>{ state.team=e.target.value; renderSchedule(); };
   $('theme').onclick = ()=>{ state.theme=state.theme==='light'?'dark':'light'; localStorage.setItem('wc-theme',state.theme); applyBodyClasses(); initControls(); };
   $('print-toggle').onclick = ()=>{ state.print=!state.print; applyBodyClasses(); initControls(); };
+  $('exit-print').onclick = ()=>{ state.print=false; applyBodyClasses(); initControls(); };
   $('scores-toggle').onclick = ()=>{ state.hideScores=!state.hideScores; localStorage.setItem('wc-hs',state.hideScores); applyBodyClasses(); initControls(); };
   $('completed-toggle').onclick = ()=>{ state.hideCompleted=!state.hideCompleted; localStorage.setItem('wc-hc',state.hideCompleted); initControls(); renderSchedule(); };
   $('time-switch').onclick = ()=>{ state.hour12=!state.hour12; localStorage.setItem('wc-h12',state.hour12); initControls(); render(); };
